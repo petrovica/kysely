@@ -67,7 +67,7 @@ import { DialectAdapter } from './dialect/dialect-adapter.js'
  *    tables. See the examples above.
  */
 export class Kysely<DB> extends QueryCreator<DB> {
-  readonly #props: KyselyProps
+  readonly props: KyselyProps
 
   constructor(args: KyselyConfig)
   constructor(args: KyselyProps)
@@ -107,14 +107,14 @@ export class Kysely<DB> extends QueryCreator<DB> {
     }
 
     super(superProps)
-    this.#props = freeze(props)
+    this.props = freeze(props)
   }
 
   /**
    * Returns the {@link SchemaModule} module for building database schema.
    */
   get schema(): SchemaModule {
-    return new SchemaModule(this.#props.executor)
+    return new SchemaModule(this.props.executor)
   }
 
   /**
@@ -131,7 +131,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * Returns a {@link DatabaseIntrospector | database introspector}.
    */
   get introspection(): DatabaseIntrospector {
-    return this.#props.dialect.createIntrospector(this.withoutPlugins())
+    return this.props.dialect.createIntrospector(this.withoutPlugins())
   }
 
   /**
@@ -163,7 +163,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * ```
    */
   get fn(): FunctionBuilder<DB, keyof DB> {
-    return new FunctionBuilder({ executor: this.#props.executor })
+    return new FunctionBuilder({ executor: this.props.executor })
   }
 
   /**
@@ -217,7 +217,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * ```
    */
   transaction(): TransactionBuilder<DB> {
-    return new TransactionBuilder({ ...this.#props })
+    return new TransactionBuilder({ ...this.props })
   }
 
   /**
@@ -237,7 +237,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * ```
    */
   connection(): ConnectionBuilder<DB> {
-    return new ConnectionBuilder({ ...this.#props })
+    return new ConnectionBuilder({ ...this.props })
   }
 
   /**
@@ -245,8 +245,8 @@ export class Kysely<DB> extends QueryCreator<DB> {
    */
   withPlugin(plugin: KyselyPlugin): Kysely<DB> {
     return new Kysely({
-      ...this.#props,
-      executor: this.#props.executor.withPlugin(plugin),
+      ...this.props,
+      executor: this.props.executor.withPlugin(plugin),
     })
   }
 
@@ -255,8 +255,8 @@ export class Kysely<DB> extends QueryCreator<DB> {
    */
   withoutPlugins(): Kysely<DB> {
     return new Kysely({
-      ...this.#props,
-      executor: this.#props.executor.withoutPlugins(),
+      ...this.props,
+      executor: this.props.executor.withoutPlugins(),
     })
   }
 
@@ -292,7 +292,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * ```
    */
   withTables<T extends Record<string, Record<string, any>>>(): Kysely<DB & T> {
-    return new Kysely({ ...this.#props })
+    return new Kysely({ ...this.props })
   }
 
   /**
@@ -301,7 +301,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * You need to call this when you are done using the `Kysely` instance.
    */
   async destroy(): Promise<void> {
-    await this.#props.driver.destroy()
+    await this.props.driver.destroy()
   }
 
   /**
@@ -318,7 +318,7 @@ export class Kysely<DB> extends QueryCreator<DB> {
    * @private
    */
   get [PRIVATE_ADAPTER](): DialectAdapter {
-    return this.#props.parseContext.adapter
+    return this.props.parseContext.adapter
   }
 }
 
